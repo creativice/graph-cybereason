@@ -1,6 +1,10 @@
-import http from 'http';
+import fetch, { Response } from 'node-fetch';
+const querystring = require('querystring');
 
-import { IntegrationProviderAuthenticationError } from '@jupiterone/integration-sdk-core';
+import {
+  IntegrationProviderAPIError,
+  IntegrationProviderAuthenticationError,
+} from '@jupiterone/integration-sdk-core';
 
 import { IntegrationConfig } from './config';
 
@@ -19,19 +23,6 @@ type AcmeGroup = {
   users?: Pick<AcmeUser, 'id'>[];
 };
 
-// Those can be useful to a degree, but often they're just full of optional
-// values. Understanding the response data may be more reliably accomplished by
-// reviewing the API response recordings produced by testing the wrapper client
-// (below). However, when there are no types provided, it is necessary to define
-// opaque types for each resource, to communicate the records that are expected
-// to come from an endpoint and are provided to iterating functions.
-
-/*
-import { Opaque } from 'type-fest';
-export type AcmeUser = Opaque<any, 'AcmeUser'>;
-export type AcmeGroup = Opaque<any, 'AcmeGroup'>;
-*/
-
 /**
  * An APIClient maintains authentication state and provides an interface to
  * third party data APIs.
@@ -43,37 +34,41 @@ export type AcmeGroup = Opaque<any, 'AcmeGroup'>;
 export class APIClient {
   constructor(readonly config: IntegrationConfig) {}
 
-  public async verifyAuthentication(): Promise<void> {
-    // TODO make the most light-weight request possible to validate
-    // authentication works with the provided credentials, throw an err if
-    // authentication fails
-    const request = new Promise<void>((resolve, reject) => {
-      http.get(
-        {
-          hostname: 'localhost',
-          port: 443,
-          path: '/api/v1/some/endpoint?limit=1',
-          agent: false,
-          timeout: 10,
-        },
-        (res) => {
-          if (res.statusCode !== 200) {
-            reject(new Error('Provider authentication failed'));
-          } else {
-            resolve();
-          }
-        },
-      );
-    });
+  private withBaseUri(path: string): string {
+    return `https://${this.config.cybereasonHost}:${this.config.cybereasonPort}/${path}`;
+  }
 
+  private async postRequest(uri: string, body: any): Promise<Response> {
+    console.log(querystring.stringify(body));
+    const response = await fetch(uri, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: querystring.stringify(body),
+    });
+    if (!response.ok) {
+      throw new IntegrationProviderAPIError({
+        endpoint: uri,
+        status: response.status,
+        statusText: response.statusText,
+      });
+    }
+    return response;
+  }
+
+  public async verifyAuthentication(): Promise<void> {
+    const loginRoute = this.withBaseUri('login.html');
     try {
-      await request;
+      await this.postRequest(loginRoute, {
+        username: this.config.cybereasonId,
+        password: this.config.cybereasonPassword,
+      }).then((res) => console.log(res.headers));
     } catch (err) {
       throw new IntegrationProviderAuthenticationError({
-        cause: err,
-        endpoint: 'https://localhost/api/v1/some/endpoint?limit=1',
-        status: err.status,
-        statusText: err.statusText,
+        endpoint: loginRoute,
+        status: err.code,
+        statusText: err.message,
       });
     }
   }

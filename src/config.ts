@@ -21,12 +21,18 @@ import { createAPIClient } from './client';
  * `instance.config` in a UI.
  */
 export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
-  clientId: {
+  cybereasonId: {
     type: 'string',
   },
-  clientSecret: {
+  cybereasonPassword: {
     type: 'string',
     mask: true,
+  },
+  cybereasonHost: {
+    type: 'string',
+  },
+  cybereasonPort: {
+    type: 'string',
   },
 };
 
@@ -38,12 +44,22 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
   /**
    * The provider API client ID used to authenticate requests.
    */
-  clientId: string;
+  cybereasonId: string;
 
   /**
    * The provider API client secret used to authenticate requests.
    */
-  clientSecret: string;
+  cybereasonPassword: string;
+
+  /**
+   * The provider API host.
+   */
+  cybereasonHost: string;
+
+  /**
+   * The provider API port.
+   */
+  cybereasonPort: string;
 }
 
 export async function validateInvocation(
@@ -51,9 +67,14 @@ export async function validateInvocation(
 ) {
   const { config } = context.instance;
 
-  if (!config.clientId || !config.clientSecret) {
+  if (
+    !config.cybereasonId ||
+    !config.cybereasonPassword ||
+    !config.cybereasonHost ||
+    !config.cybereasonPort
+  ) {
     throw new IntegrationValidationError(
-      'Config requires all of {clientId, clientSecret}',
+      'Config requires all of {cybereasonId, cybereasonPassword, cybereasonHost, cybereasonPort}',
     );
   }
 
