@@ -1,5 +1,5 @@
 import {
-  IntegrationProviderAuthenticationError,
+  IntegrationProviderAPIError,
   IntegrationValidationError,
 } from '@jupiterone/integration-sdk-core';
 import {
@@ -30,12 +30,15 @@ it('auth error', async () => {
 
   const executionContext = createMockExecutionContext({
     instanceConfig: {
-      clientId: 'INVALID',
-      clientSecret: 'INVALID',
+      cybereasonId: 'INVALID',
+      cybereasonPassword: 'INVALID',
+      cybereasonHost: 'INVALID',
+      cybereasonPort: 'INVALID',
     },
   });
 
+  // Change assertion to expect API error since host and port should be invalid
   await expect(validateInvocation(executionContext)).rejects.toThrow(
-    IntegrationProviderAuthenticationError,
+    IntegrationProviderAPIError,
   );
 });

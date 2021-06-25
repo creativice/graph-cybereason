@@ -7,10 +7,15 @@ if (process.env.LOAD_ENV) {
     path: path.join(__dirname, '../.env'),
   });
 }
-const DEFAULT_CLIENT_ID = 'dummy-acme-client-id';
-const DEFAULT_CLIENT_SECRET = 'dummy-acme-client-secret';
+const DEFAULT_CYBEREASON_ID = 'dummy-acme-client-id';
+const DEFAULT_CYBEREASON_SECRET = 'dummy-acme-client-secret';
+const DEFAULT_CYBEREASON_HOST = 'integration.cybereason.net';
+const DEFAULT_CYBEREASON_PORT = '8443';
 
 export const integrationConfig: IntegrationConfig = {
-  clientId: process.env.CLIENT_ID || DEFAULT_CLIENT_ID,
-  clientSecret: process.env.CLIENT_SECRET || DEFAULT_CLIENT_SECRET,
+  cybereasonId: process.env.CYBEREASON_ID || DEFAULT_CYBEREASON_ID,
+  cybereasonPassword:
+    process.env.CYBEREASON_PASSWORD || DEFAULT_CYBEREASON_SECRET,
+  cybereasonHost: process.env.CYBEREASON_HOST || DEFAULT_CYBEREASON_HOST,
+  cybereasonPort: process.env.CYBEREASON_PORT || DEFAULT_CYBEREASON_PORT,
 };
