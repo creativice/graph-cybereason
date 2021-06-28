@@ -10,8 +10,6 @@ import { IntegrationConfig } from './config';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
-// Providers often supply types with their API libraries.
-
 type AcmeUser = {
   id: string;
   name: string;
@@ -38,14 +36,11 @@ export class APIClient {
     return `https://${this.config.cybereasonHost}:${this.config.cybereasonPort}/${path}`;
   }
 
-  private async postRequest(uri: string, body: any): Promise<Response> {
-    console.log(querystring.stringify(body));
+  private async getRequest(uri: string, cookie: string): Promise<Response> {
     const response = await fetch(uri, {
-      method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        cookie,
       },
-      body: querystring.stringify(body),
     });
     if (!response.ok) {
       throw new IntegrationProviderAPIError({
@@ -57,20 +52,73 @@ export class APIClient {
     return response;
   }
 
-  public async verifyAuthentication(): Promise<void> {
-    const loginRoute = this.withBaseUri('login.html');
-    try {
-      await this.postRequest(loginRoute, {
-        username: this.config.cybereasonId,
-        password: this.config.cybereasonPassword,
-      }).then((res) => console.log(res.headers));
-    } catch (err) {
-      throw new IntegrationProviderAuthenticationError({
-        endpoint: loginRoute,
-        status: err.code,
-        statusText: err.message,
+  private async postRequest(
+    uri: string,
+    body: any,
+    dontRedirect?: boolean,
+  ): Promise<Response> {
+    const redirect = dontRedirect ? 'manual' : 'follow';
+
+    const response = await fetch(uri, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: querystring.stringify(body),
+      redirect,
+    });
+    if (!(response.ok || (response.status === 302 && dontRedirect))) {
+      throw new IntegrationProviderAPIError({
+        endpoint: uri,
+        status: response.status,
+        statusText: response.statusText,
       });
     }
+    return response;
+  }
+
+  public async login(): Promise<string> {
+    const loginRoute = this.withBaseUri('login.html');
+    const res = await this.postRequest(
+      loginRoute,
+      {
+        username: this.config.cybereasonId,
+        password: this.config.cybereasonPassword,
+      },
+      true,
+    );
+    return (
+      res.headers
+        .get('set-cookie')
+        ?.split('; ')
+        .filter((item) => item.search('JSESSIONID') >= 0)[0] || ''
+    );
+  }
+
+  public async logout(cookie: string): Promise<void> {
+    const logoutRoute = this.withBaseUri('logout');
+    await this.getRequest(logoutRoute, cookie);
+  }
+
+  public async verifyAuthentication(): Promise<void> {
+    const cookie = await this.login();
+
+    // NOTE: This only works with 'System admin' role
+    // no API endpoint is available for all roles, need to find
+    // a better endpoint to test the cookie that is not hindered
+    // by role permissions.
+    const groupsUri = this.withBaseUri('rest/groups');
+    const res = await this.getRequest(groupsUri, cookie);
+
+    // if cookie is invalid, API responds with login.html
+    if (res.headers.get('content-type') === 'text/html')
+      throw new IntegrationProviderAuthenticationError({
+        endpoint: groupsUri,
+        status: res.status,
+        statusText: res.statusText,
+      });
+
+    await this.logout(cookie);
   }
 
   /**
