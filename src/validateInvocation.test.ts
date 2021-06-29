@@ -37,8 +37,7 @@ it('auth error', async () => {
     },
   });
 
-  // TEMP: Change assertion pass test and push for draft PR
-
+  // Change assertion to expect API error since host and port should be invalid
   await expect(validateInvocation(executionContext)).rejects.toThrow(
     IntegrationProviderAPIError,
   );

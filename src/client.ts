@@ -1,9 +1,9 @@
 import fetch, { Response } from 'node-fetch';
-const querystring = require('querystring');
+import qs from 'querystring';
 
 import {
-  IntegrationProviderAPIError,
   IntegrationProviderAuthenticationError,
+  IntegrationProviderAPIError,
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationConfig } from './config';
@@ -32,93 +32,88 @@ type AcmeGroup = {
 export class APIClient {
   constructor(readonly config: IntegrationConfig) {}
 
+  private accessToken: string;
+
   private withBaseUri(path: string): string {
     return `https://${this.config.cybereasonHost}:${this.config.cybereasonPort}/${path}`;
   }
 
-  private async getRequest(uri: string, cookie: string): Promise<Response> {
-    const response = await fetch(uri, {
-      headers: {
-        cookie,
-      },
-    });
-    if (!response.ok) {
-      throw new IntegrationProviderAPIError({
-        endpoint: uri,
-        status: response.status,
-        statusText: response.statusText,
-      });
+  private async request(
+    uri: string,
+    method: 'GET' | 'POST' | 'HEAD' = 'GET',
+    body?: any,
+  ): Promise<Response> {
+    if (!this.accessToken) {
+      await this.getAuthenticationToken();
     }
-    return response;
+
+    const res = await fetch(uri, {
+      method,
+      headers: {
+        cookie: this.accessToken,
+      },
+      body: body || null,
+    });
+
+    await this.logout();
+    return res;
   }
 
-  private async postRequest(
-    uri: string,
-    body: any,
-    dontRedirect?: boolean,
-  ): Promise<Response> {
-    const redirect = dontRedirect ? 'manual' : 'follow';
-
-    const response = await fetch(uri, {
+  private async getAuthenticationToken() {
+    const loginUri = this.withBaseUri('login.html');
+    const request = fetch(loginUri, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: querystring.stringify(body),
-      redirect,
+      body: qs.stringify({
+        username: this.config.cybereasonId,
+        password: this.config.cybereasonPassword,
+      }),
+      redirect: 'manual',
     });
-    if (!(response.ok || (response.status === 302 && dontRedirect))) {
+
+    const response = await request;
+    const cookie =
+      response.headers
+        .get('set-cookie')
+        ?.split('; ')
+        .filter((item) => item.search('JSESSIONID') >= 0)[0] || '';
+
+    if (!cookie)
       throw new IntegrationProviderAPIError({
-        endpoint: uri,
+        cause: new Error('Provider api failed'),
+        endpoint: loginUri,
         status: response.status,
         statusText: response.statusText,
       });
-    }
-    return response;
+    this.accessToken = cookie;
   }
 
-  public async login(): Promise<string> {
-    const loginRoute = this.withBaseUri('login.html');
-    const res = await this.postRequest(
-      loginRoute,
-      {
-        username: this.config.cybereasonId,
-        password: this.config.cybereasonPassword,
-      },
-      true,
-    );
-    return (
-      res.headers
-        .get('set-cookie')
-        ?.split('; ')
-        .filter((item) => item.search('JSESSIONID') >= 0)[0] || ''
-    );
-  }
-
-  public async logout(cookie: string): Promise<void> {
+  public async logout(): Promise<void> {
     const logoutRoute = this.withBaseUri('logout');
-    await this.getRequest(logoutRoute, cookie);
+    await fetch(logoutRoute, {
+      headers: {
+        cookie: this.accessToken,
+      },
+    });
   }
 
   public async verifyAuthentication(): Promise<void> {
-    const cookie = await this.login();
-
     // NOTE: This only works with 'System admin' role
     // no API endpoint is available for all roles, need to find
     // a better endpoint to test the cookie that is not hindered
     // by role permissions.
     const groupsUri = this.withBaseUri('rest/groups');
-    const res = await this.getRequest(groupsUri, cookie);
+    const res = await this.request(groupsUri, 'GET');
 
     // if cookie is invalid, API responds with login.html
     if (res.headers.get('content-type') === 'text/html')
       throw new IntegrationProviderAuthenticationError({
         endpoint: groupsUri,
         status: res.status,
-        statusText: res.statusText,
+        statusText: 'Invalid authentication cookie',
       });
-
-    await this.logout(cookie);
   }
 
   /**
