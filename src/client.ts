@@ -32,7 +32,7 @@ type AcmeGroup = {
 export class APIClient {
   constructor(readonly config: IntegrationConfig) {}
 
-  private accessToken: string;
+  private sessionCookie: string;
 
   private withBaseUri(path: string): string {
     return `https://${this.config.cybereasonHost}:${this.config.cybereasonPort}/${path}`;
@@ -43,14 +43,14 @@ export class APIClient {
     method: 'GET' | 'POST' | 'HEAD' = 'GET',
     body?: any,
   ): Promise<Response> {
-    if (!this.accessToken) {
+    if (!this.sessionCookie) {
       await this.getAuthenticationToken();
     }
 
     const res = await fetch(uri, {
       method,
       headers: {
-        cookie: this.accessToken,
+        cookie: this.sessionCookie,
       },
       body: body || null,
     });
@@ -87,14 +87,14 @@ export class APIClient {
         status: response.status,
         statusText: response.statusText,
       });
-    this.accessToken = cookie;
+    this.sessionCookie = cookie;
   }
 
   public async logout(): Promise<void> {
     const logoutRoute = this.withBaseUri('logout');
     await fetch(logoutRoute, {
       headers: {
-        cookie: this.accessToken,
+        cookie: this.sessionCookie,
       },
     });
   }
