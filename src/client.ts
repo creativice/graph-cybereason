@@ -7,6 +7,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationConfig } from './config';
+import { Malop } from './types';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
@@ -51,6 +52,7 @@ export class APIClient {
       method,
       headers: {
         cookie: this.sessionCookie,
+        'Content-Type': 'application/json',
       },
       body: body || null,
     });
@@ -114,6 +116,41 @@ export class APIClient {
         status: res.status,
         statusText: 'Invalid authentication cookie',
       });
+  }
+
+  /**
+   * Iterates each malop resource in the provider.
+   *
+   * @param iteratee receives each resource to produce entitites/relationships
+   */
+  public async iterateMalops(iteratee: ResourceIteratee<Malop>): Promise<void> {
+    const res = await this.request(
+      this.withBaseUri('rest/crimes/unified'),
+      'POST',
+      {
+        totalResultLimit: 10000,
+        perGroupLimit: 10000,
+        perFeatureLimit: 100,
+        templateContext: 'OVERVIEW',
+        queryPath: [
+          {
+            requestedType: 'MalopProcess',
+            result: true,
+            filters: null,
+          },
+        ],
+      },
+    );
+
+    console.log(res.status);
+
+    const body = await res.json();
+
+    const malops = body.resultIdToElementDataMap;
+
+    for (const malop in malops) {
+      await iteratee({ ...malops[malop] } as Malop);
+    }
   }
 
   /**
