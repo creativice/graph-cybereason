@@ -127,7 +127,7 @@ export class APIClient {
     const res = await this.request(
       this.withBaseUri('rest/crimes/unified'),
       'POST',
-      {
+      JSON.stringify({
         totalResultLimit: 10000,
         perGroupLimit: 10000,
         perFeatureLimit: 100,
@@ -139,7 +139,7 @@ export class APIClient {
             filters: null,
           },
         ],
-      },
+      }),
     );
 
     console.log(res.status);
