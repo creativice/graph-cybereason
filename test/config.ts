@@ -15,9 +15,7 @@ const DEFAULT_CYBEREASON_PORT = 'dummy-acme-client-port';
 export const integrationConfig: IntegrationConfig = {
   cybereasonId: process.env.CYBEREASON_ID || DEFAULT_CYBEREASON_ID,
   cybereasonPassword:
-    process.env.CYBEREASON_SECRET || DEFAULT_CYBEREASON_SECRET,
-  cybereasonHost:
-    process.env.DEFAULT_CYBEREASON_HOST || DEFAULT_CYBEREASON_HOST,
-  cybereasonPort:
-    process.env.DEFAULT_CYBEREASON_PORT || DEFAULT_CYBEREASON_PORT,
+    process.env.CYBEREASON_PASSWORD || DEFAULT_CYBEREASON_SECRET,
+  cybereasonHost: process.env.CYBEREASON_HOST || DEFAULT_CYBEREASON_HOST,
+  cybereasonPort: process.env.CYBEREASON_PORT || DEFAULT_CYBEREASON_PORT,
 };

@@ -7,7 +7,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationConfig } from './config';
-import { Malop } from './types';
+import { Malop, Sensor } from './types';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
@@ -142,14 +142,38 @@ export class APIClient {
       }),
     );
 
-    console.log(res.status);
-
     const body = await res.json();
 
     const malops = body.resultIdToElementDataMap;
 
     for (const malop in malops) {
       await iteratee({ ...malops[malop] } as Malop);
+    }
+  }
+
+  /**
+   * Iterates each sensor resource in the provider.
+   *
+   * @param iteratee receives each resource to produce entitites/relationships
+   */
+  public async iterateSensors(
+    iteratee: ResourceIteratee<Sensor>,
+  ): Promise<void> {
+    const res = await this.request(
+      this.withBaseUri('rest/sensors/query'),
+      'POST',
+      JSON.stringify({
+        limit: 1000,
+        offset: 0,
+      }),
+    );
+
+    const body = await res.json();
+
+    const sensors = body.sensors;
+
+    for (const sensor of sensors) {
+      await iteratee(sensor as Sensor);
     }
   }
 

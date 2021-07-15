@@ -5,25 +5,25 @@ import {
 import { createAPIClient } from '../../client';
 import { IntegrationConfig } from '../../config';
 import { Entities, IntegrationSteps } from '../constants';
-import { createMalopEntity } from './converters';
+import { createSensorEntity } from './converters';
 
-export async function fetchMalops({
+export async function fetchSensors({
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
   const apiClient = createAPIClient(instance.config);
-  await apiClient.iterateMalops(async (malop) => {
-    const malopEntity = createMalopEntity(malop);
-    await jobState.addEntity(malopEntity);
+  await apiClient.iterateSensors(async (sensor) => {
+    const sensorEntity = createSensorEntity(sensor);
+    await jobState.addEntity(sensorEntity);
   });
 }
 
-export const malopSteps: IntegrationStep<IntegrationConfig>[] = [
+export const sensorSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: IntegrationSteps.MALOPS,
-    name: 'Fetch Malops',
-    entities: [Entities.MALOP],
+    id: IntegrationSteps.SENSORS,
+    name: 'Fetch Sensors',
+    entities: [Entities.SENSOR],
     relationships: [],
-    executionHandler: fetchMalops,
+    executionHandler: fetchSensors,
   },
 ];

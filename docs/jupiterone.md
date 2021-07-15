@@ -100,6 +100,7 @@ The following entities are created:
 | --------- | -------------- | --------------- |
 | Account   | `acme_account` | `Account`       |
 | Malop     | `malop`        | `Risk`          |
+| Sensor    | `sensor`       | `Scanner`       |
 
 ### Relationships
 

@@ -52,3 +52,57 @@ export type Malop = {
   labelsIds: Array<string> | null;
   malopPriority: null; // Unclear
 };
+
+export type Sensor = {
+  sensorId: string;
+  pylumId: string;
+  guid: string;
+  fqdn: string;
+  machineName: string;
+  internalIpAddress: string;
+  externalIpAddress: string;
+  siteName: string; // Unclear
+  siteId: string; // Unclear
+  ransomwareStatus: string;
+  preventionStatus: string;
+  isolated: boolean;
+  disconnectionTime: number;
+  lastPylumInfoMsgUpdateTime: number;
+  status: string;
+  onlineTimeMS: number;
+  offlineTimeMS: number;
+  staleTimeMS: number;
+  archiveTimeMS: number;
+  statusTimeMS: number;
+  lastStatusAction: string;
+  archivedOrUnarchiveComment: string;
+  sensorArchivedByUser: string;
+  serverName: string;
+  serverId: string;
+  osType: string;
+  osVersionType: string;
+  collectionStatus: string;
+  version: string;
+  firstSeenTime: number;
+  upTime: number;
+  cpuUsage: number;
+  memoryUsage: number;
+  outdated: boolean;
+  amStatus: string;
+  powerShellStatus: string;
+  antiMalwareStatus: string;
+  organization: string;
+  proxyAddress: string; // Unclear
+  preventionError: string; // Unclear
+  exitReason: string;
+  actionsInProgess: number;
+  pendingActions: number; // Unclear
+  lastUpgradeResult: string; // Unclear
+  lastUpgradeSteps: string; // Unclear
+  disconnected: boolean;
+  sensorLastUpdate: number;
+  fullScanStatus: string;
+  quickScanStatus: string;
+  lastFullScheduleScanSuccessTime: number;
+  lastQuickScheduleScanSuccessTime: number;
+};
