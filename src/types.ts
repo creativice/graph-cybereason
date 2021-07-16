@@ -106,3 +106,47 @@ export type Sensor = {
   lastFullScheduleScanSuccessTime: number;
   lastQuickScheduleScanSuccessTime: number;
 };
+
+export type Remediation = {
+  malopId: string;
+  remediationId: string;
+  start: number;
+  end: number;
+  initiatingUser: string;
+  statusLog: Array<{
+    machineId: string;
+    targetId: string | null; // Unclear
+    status: string;
+    actionType: string;
+    timestamp: number;
+  }>;
+};
+
+export type Malware = {
+  guid: string;
+  timestamp: number;
+  name: string;
+  type: string;
+  elementType: string;
+  machineName: string;
+  status: string;
+  needsAttention: boolean;
+  referenceGuid: string;
+  referenceElementType: string;
+  score: number;
+  detectionValue: string;
+  detectionValueType: string;
+  malwareDataModel: {
+    '@class': string;
+    type: string;
+    detectionName: string;
+    filePath: string;
+  };
+  schedulerScan: boolean;
+  id: {
+    guid: string;
+    timestamp: number;
+    malwareType: string;
+    elementType: string;
+  };
+};

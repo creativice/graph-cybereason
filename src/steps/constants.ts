@@ -1,8 +1,9 @@
 import { StepEntityMetadata } from '@jupiterone/integration-sdk-core';
 
-export const MALOP_ENTITY_KEY = 'entity:malop';
-
-export const Entities: Record<'MALOP' | 'SENSOR', StepEntityMetadata> = {
+export const Entities: Record<
+  'MALOP' | 'SENSOR' | 'MALWARE',
+  StepEntityMetadata
+> = {
   MALOP: {
     resourceName: 'Malop',
     _type: 'malop',
@@ -13,9 +14,15 @@ export const Entities: Record<'MALOP' | 'SENSOR', StepEntityMetadata> = {
     _type: 'sensor',
     _class: 'Scanner',
   },
+  MALWARE: {
+    resourceName: 'Malware',
+    _type: 'malware',
+    _class: 'Finding',
+  },
 };
 
 export enum IntegrationSteps {
   MALOPS = 'fetch-malops',
   SENSORS = 'fetch-sensors',
+  MALWARES = 'fetch-malwares',
 }

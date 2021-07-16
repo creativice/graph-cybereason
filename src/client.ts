@@ -7,7 +7,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationConfig } from './config';
-import { Malop, Sensor } from './types';
+import { Malop, Malware, Sensor } from './types';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
@@ -174,6 +174,41 @@ export class APIClient {
 
     for (const sensor of sensors) {
       await iteratee(sensor as Sensor);
+    }
+  }
+
+  /**
+   * Iterates each sensor resource in the provider.
+   *
+   * @param iteratee receives each resource to produce entitites/relationships
+   */
+  public async iterateMalwares(
+    iteratee: ResourceIteratee<Malware>,
+  ): Promise<void> {
+    const res = await this.request(
+      this.withBaseUri('rest/malware/query'),
+      'POST',
+      JSON.stringify({
+        filters: [
+          {
+            fieldName: 'needsAttention',
+            operator: 'Is',
+            values: [true],
+          },
+        ],
+        sortingFieldName: 'timestamp',
+        sortDirection: 'DESC',
+        limit: 100,
+        offset: 0,
+      }),
+    );
+
+    const body = await res.json();
+
+    const malwares = body.data.malwares;
+
+    for (const malware of malwares) {
+      await iteratee(malware as Malware);
     }
   }
 
