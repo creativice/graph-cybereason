@@ -15,6 +15,7 @@ export function createMalopEntity(data: Malop) {
         _type: Entities.MALOP._type,
         _key: getMalopKey(data.guidString),
         displayName: data.guidString, // Doubtful if this is needed
+        id: data.guidString,
       },
     },
   });

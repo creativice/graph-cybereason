@@ -1,7 +1,11 @@
-import { StepEntityMetadata } from '@jupiterone/integration-sdk-core';
+import {
+  RelationshipClass,
+  StepEntityMetadata,
+  StepRelationshipMetadata,
+} from '@jupiterone/integration-sdk-core';
 
 export const Entities: Record<
-  'MALOP' | 'SENSOR' | 'MALWARE',
+  'MALOP' | 'SENSOR' | 'MALWARE' | 'REMEDIATION',
   StepEntityMetadata
 > = {
   MALOP: {
@@ -19,10 +23,28 @@ export const Entities: Record<
     _type: 'malware',
     _class: 'Finding',
   },
+  REMEDIATION: {
+    resourceName: 'Remediation',
+    _type: 'remediation',
+    _class: 'Control',
+  },
 };
 
 export enum IntegrationSteps {
   MALOPS = 'fetch-malops',
   SENSORS = 'fetch-sensors',
   MALWARES = 'fetch-malwares',
+  REMEDIATIONS = 'fetch-remediations',
 }
+
+export const Relationships: Record<
+  'MALOP_HAS_REMEDIATION',
+  StepRelationshipMetadata
+> = {
+  MALOP_HAS_REMEDIATION: {
+    _type: 'malop_has_remediation',
+    _class: RelationshipClass.HAS,
+    sourceType: Entities.MALOP._type,
+    targetType: Entities.REMEDIATION._type,
+  },
+};

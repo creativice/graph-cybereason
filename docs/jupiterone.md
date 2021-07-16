@@ -96,12 +96,13 @@ https://github.com/JupiterOne/sdk/blob/master/docs/integrations/development.md
 
 The following entities are created:
 
-| Resources | Entity `_type` | Entity `_class` |
-| --------- | -------------- | --------------- |
-| Account   | `acme_account` | `Account`       |
-| Malop     | `malop`        | `Risk`          |
-| Malware   | `malware`      | `Finding`       |
-| Sensor    | `sensor`       | `Scanner`       |
+| Resources   | Entity `_type` | Entity `_class` |
+| ----------- | -------------- | --------------- |
+| Account     | `acme_account` | `Account`       |
+| Malop       | `malop`        | `Risk`          |
+| Malware     | `malware`      | `Finding`       |
+| Remediation | `remediation`  | `Control`       |
+| Sensor      | `sensor`       | `Scanner`       |
 
 ### Relationships
 
@@ -112,6 +113,7 @@ The following relationships are created/mapped:
 | `acme_account`        | **HAS**               | `acme_group`          |
 | `acme_account`        | **HAS**               | `acme_user`           |
 | `acme_group`          | **HAS**               | `acme_user`           |
+| `malop`               | **HAS**               | `remediation`         |
 
 <!--
 ********************************************************************************

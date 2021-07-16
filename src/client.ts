@@ -7,7 +7,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationConfig } from './config';
-import { Malop, Malware, Sensor } from './types';
+import { Malop, Malware, Remediation, Sensor } from './types';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
@@ -178,7 +178,7 @@ export class APIClient {
   }
 
   /**
-   * Iterates each sensor resource in the provider.
+   * Iterates each malware resource in the provider.
    *
    * @param iteratee receives each resource to produce entitites/relationships
    */
@@ -210,6 +210,22 @@ export class APIClient {
     for (const malware of malwares) {
       await iteratee(malware as Malware);
     }
+  }
+
+  /**
+   * Gets the remediation resource for a given malop in the provider.
+   *
+   * @param malopId ID of the malop to get the remediation for
+   */
+  public async getRemediation(malopId: string): Promise<Remediation> {
+    const res = await this.request(
+      this.withBaseUri(`rest/remediate/status/${malopId}`),
+      'GET',
+    );
+
+    const body = await res.json();
+
+    return body;
   }
 
   /**
