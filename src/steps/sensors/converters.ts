@@ -16,6 +16,8 @@ export function createSensorEntity(data: Sensor) {
         _key: getSensorKey(data.guid),
         name: data.guid,
         category: ['sensor'],
+        // TODO: can you map all the fields in here?
+        // Similar to malops/converter.ts (just you don't have use the custom map function)
       },
     },
   });

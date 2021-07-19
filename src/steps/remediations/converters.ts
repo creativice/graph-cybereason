@@ -14,6 +14,9 @@ export function createRemediationEntity(data: Remediation) {
         _class: Entities.REMEDIATION._class,
         _type: Entities.REMEDIATION._type,
         _key: getRemediationKey(data.remediationId),
+        name: data.remediationId,
+        start: data.start,
+        end: data.end,
       },
     },
   });

@@ -9,8 +9,8 @@ if (process.env.LOAD_ENV) {
 }
 const DEFAULT_CYBEREASON_ID = 'dummy-acme-client-id';
 const DEFAULT_CYBEREASON_SECRET = 'dummy-acme-client-secret';
-const DEFAULT_CYBEREASON_HOST = 'dummy-acme-client-host';
-const DEFAULT_CYBEREASON_PORT = 'dummy-acme-client-port';
+const DEFAULT_CYBEREASON_HOST = 'integration.cybereason.net';
+const DEFAULT_CYBEREASON_PORT = '8443';
 
 export const integrationConfig: IntegrationConfig = {
   cybereasonId: process.env.CYBEREASON_ID || DEFAULT_CYBEREASON_ID,

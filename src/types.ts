@@ -1,4 +1,4 @@
-type SimpleMalopFeature = {
+export type SimpleMalopFeature = {
   totalValues: number;
   values: Array<string> | null;
 };

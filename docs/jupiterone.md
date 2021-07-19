@@ -96,24 +96,20 @@ https://github.com/JupiterOne/sdk/blob/master/docs/integrations/development.md
 
 The following entities are created:
 
-| Resources   | Entity `_type` | Entity `_class` |
-| ----------- | -------------- | --------------- |
-| Account     | `acme_account` | `Account`       |
-| Malop       | `malop`        | `Risk`          |
-| Malware     | `malware`      | `Finding`       |
-| Remediation | `remediation`  | `Control`       |
-| Sensor      | `sensor`       | `Scanner`       |
+| Resources   | Entity `_type`           | Entity `_class` |
+| ----------- | ------------------------ | --------------- |
+| Malop       | `cybereason_malop`       | `Assessment`    |
+| Malware     | `cybereason_malware`     | `Finding`       |
+| Remediation | `cybereason_remediation` | `Control`       |
+| Sensor      | `cybereason_sensor`      | `Scanner`       |
 
 ### Relationships
 
 The following relationships are created/mapped:
 
-| Source Entity `_type` | Relationship `_class` | Target Entity `_type` |
-| --------------------- | --------------------- | --------------------- |
-| `acme_account`        | **HAS**               | `acme_group`          |
-| `acme_account`        | **HAS**               | `acme_user`           |
-| `acme_group`          | **HAS**               | `acme_user`           |
-| `malop`               | **HAS**               | `remediation`         |
+| Source Entity `_type` | Relationship `_class` | Target Entity `_type`    |
+| --------------------- | --------------------- | ------------------------ |
+| `cybereason_malop`    | **HAS**               | `cybereason_remediation` |
 
 <!--
 ********************************************************************************
