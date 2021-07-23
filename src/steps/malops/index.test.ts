@@ -6,6 +6,7 @@ import { fetchMalops } from '.';
 import { integrationConfig } from '../../../test/config';
 import { setupCybereasonRecording } from '../../../test/recording';
 import { IntegrationConfig } from '../../config';
+import { Entities } from '../constants';
 
 describe('#fetchMalops', () => {
   let recording: Recording;
@@ -40,11 +41,11 @@ describe('#fetchMalops', () => {
     }).toMatchSnapshot();
 
     const malops = context.jobState.collectedEntities.filter((e) =>
-      e._class.includes('Assessment'),
+      e._class.includes(Entities.MALOP._class as string),
     );
     expect(malops.length).toBeGreaterThan(0);
     expect(malops).toMatchGraphObjectSchema({
-      _class: ['Assessment'],
+      _class: [Entities.MALOP._class as string],
       schema: {
         additionalProperties: false,
         properties: {
@@ -52,7 +53,7 @@ describe('#fetchMalops', () => {
             type: 'array',
             items: { type: 'object' },
           },
-          _type: { const: 'cybereason_malop' },
+          _type: { const: Entities.MALOP._type },
           name: { type: 'string' },
           id: { type: 'string' },
           hasRansomwareSuspendedProcesses: { type: 'boolean' },

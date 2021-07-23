@@ -17,6 +17,11 @@ export function createRemediationEntity(data: Remediation) {
         name: data.remediationId,
         start: data.start,
         end: data.end,
+        malopId: data.malopId,
+        id: data.remediationId,
+        initiatingUser: data.initiatingUser,
+        machineId: data.statusLog.length > 0 ? data.statusLog[0].machineId : '',
+        targetId: data.statusLog.length > 0 ? data.statusLog[0].targetId : '',
       },
     },
   });

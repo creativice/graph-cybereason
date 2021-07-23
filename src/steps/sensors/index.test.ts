@@ -53,7 +53,7 @@ describe('#fetchSensors', () => {
             type: 'array',
             items: { type: 'object' },
           },
-          _type: { const: 'cybereason_malop' },
+          _type: { const: Entities.SENSOR._type },
           name: { type: 'string' },
           id: { type: 'string' },
           sensorId: {
