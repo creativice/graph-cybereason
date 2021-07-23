@@ -11,6 +11,18 @@ function getMalopKey(id: string): string {
 // 2) Quite a few fields can have values either be an array of single element, or multiple
 //    We'd need to isolate those fields and then for those fields always return them as an array of elements
 
+function toBool(val: any) {
+  if (val === 'true') {
+    return true;
+  }
+
+  if (val === 'false') {
+    return false;
+  }
+
+  return val;
+}
+
 function mapMalopSimpleFieldValue(
   value: SimpleMalopFeature,
 ): boolean | string | string[] | null {
@@ -20,11 +32,11 @@ function mapMalopSimpleFieldValue(
   // We know the return type isn't going to be an array
   if (value.totalValues && value.totalValues === 1) {
     if (value.values && value.values.length > 0) {
-      return value.values[0];
+      return toBool(value.values[0]);
     }
   }
 
-  return value.values;
+  return value.values ? value.values.map((val) => toBool(val)) : null;
 }
 
 export function createMalopEntity(data: Malop) {
