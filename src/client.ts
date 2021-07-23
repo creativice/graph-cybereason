@@ -216,7 +216,44 @@ export class APIClient {
     // If there is a duplicate of a malware and they share the same guid and machineName
     // Only keep the one that has the highest timestamp and don't iterate over the others
 
+    // Map the malwares to a map of guids to malwares
+    const guidToData = {} as Record<string, Array<Malware>>;
+
     for (const malware of malwares) {
+      if (!guidToData[malware.guid]) {
+        guidToData[malware.guid] = [];
+      }
+      guidToData[malware.guid].push(malware);
+    }
+
+    for (let guid in guidToData) {
+      // Identify duplicates
+      if (guidToData[guid].length > 1) {
+        let duplicates = guidToData[guid];
+        const timestamps = duplicates.map((malware) => malware.timestamp);
+        const mostRecentMalwareIndex = timestamps.indexOf(
+          Math.max(...timestamps),
+        );
+
+        // Remove all except the latest malware
+        for (let i = 0; i < duplicates.length; i++) {
+          if (i !== mostRecentMalwareIndex) {
+            delete duplicates[i];
+          }
+        }
+
+        // Remove empty slots from the array
+        duplicates = duplicates.filter((x) => x);
+      }
+    }
+    const filteredMalwares: Array<Malware> = [];
+
+    // 'Merge' the guidToData map into a single array
+    for (let guid in guidToData) {
+      filteredMalwares.push(guidToData[guid][0]);
+    }
+
+    for (const malware of filteredMalwares) {
       await iteratee(malware as Malware);
     }
   }
