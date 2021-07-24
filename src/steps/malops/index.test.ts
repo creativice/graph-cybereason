@@ -6,7 +6,6 @@ import { fetchMalops } from '.';
 import { integrationConfig } from '../../../test/config';
 import { setupCybereasonRecording } from '../../../test/recording';
 import { IntegrationConfig } from '../../config';
-import { Entities } from '../constants';
 
 describe('#fetchMalops', () => {
   let recording: Recording;
@@ -41,11 +40,11 @@ describe('#fetchMalops', () => {
     }).toMatchSnapshot();
 
     const malops = context.jobState.collectedEntities.filter((e) =>
-      e._class.includes(Entities.MALOP._class as string),
+      e._class.includes('Assessment'),
     );
     expect(malops.length).toBeGreaterThan(0);
     expect(malops).toMatchGraphObjectSchema({
-      _class: [Entities.MALOP._class as string],
+      _class: ['Assessment'],
       schema: {
         additionalProperties: false,
         properties: {
@@ -53,7 +52,7 @@ describe('#fetchMalops', () => {
             type: 'array',
             items: { type: 'object' },
           },
-          _type: { const: Entities.MALOP._type },
+          _type: { const: 'cybereason_malop' },
           name: { type: 'string' },
           id: { type: 'string' },
           hasRansomwareSuspendedProcesses: { type: 'boolean' },
@@ -76,7 +75,6 @@ describe('#fetchMalops', () => {
           suspicionCount: { type: 'number' },
           isMalicious: { type: 'boolean' },
           malopPriority: { type: 'string' },
-          // Required fields for class "Assessment"
           category: { type: 'string' },
           summary: { type: 'string' },
           internal: { type: 'boolean' },

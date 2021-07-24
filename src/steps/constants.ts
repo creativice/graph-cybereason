@@ -8,8 +8,6 @@ export const Entities: Record<
   'MALOP' | 'SENSOR' | 'MALWARE' | 'REMEDIATION',
   StepEntityMetadata
 > = {
-  // Assesment
-  // "An object to represent an assessment, including both compliance assessment such as a HIPAA Risk Assessment or a technical assessment such as a Penetration Testing. Each assessment should have findings (e.g. Vulnerability or Risk) associated.",
   MALOP: {
     resourceName: 'Malop',
     _type: 'cybereason_malop',
@@ -44,7 +42,7 @@ export const Relationships: Record<
   StepRelationshipMetadata
 > = {
   MALOP_HAS_REMEDIATION: {
-    _type: 'malop_has_remediation',
+    _type: 'cybereason_malop_has_remediation',
     _class: RelationshipClass.HAS,
     sourceType: Entities.MALOP._type,
     targetType: Entities.REMEDIATION._type,

@@ -11,17 +11,6 @@ import { Malop, Malware, Remediation, Sensor } from './types';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
-type AcmeUser = {
-  id: string;
-  name: string;
-};
-
-type AcmeGroup = {
-  id: string;
-  name: string;
-  users?: Pick<AcmeUser, 'id'>[];
-};
-
 /**
  * An APIClient maintains authentication state and provides an interface to
  * third party data APIs.
@@ -58,7 +47,7 @@ export class APIClient {
     });
 
     // if this is uncommented, integration fails at remediations step (there's a lot of subsequent requests and the error shows
-    // that the code got redirected to /login.html page) :thinking:
+    // that the code got redirected to /login.html page)
     // await this.logout();
     return res;
   }
@@ -226,7 +215,7 @@ export class APIClient {
       guidToData[malware.guid].push(malware);
     }
 
-    for (let guid in guidToData) {
+    for (const guid in guidToData) {
       // Identify duplicates
       if (guidToData[guid].length > 1) {
         let duplicates = guidToData[guid];
@@ -249,7 +238,7 @@ export class APIClient {
     const filteredMalwares: Array<Malware> = [];
 
     // 'Merge' the guidToData map into a single array
-    for (let guid in guidToData) {
+    for (const guid in guidToData) {
       filteredMalwares.push(guidToData[guid][0]);
     }
 
@@ -270,71 +259,6 @@ export class APIClient {
     );
 
     return res.json();
-  }
-
-  /**
-   * Iterates each user resource in the provider.
-   *
-   * @param iteratee receives each resource to produce entities/relationships
-   */
-  public async iterateUsers(
-    iteratee: ResourceIteratee<AcmeUser>,
-  ): Promise<void> {
-    // TODO paginate an endpoint, invoke the iteratee with each record in the
-    // page
-    //
-    // The provider API will hopefully support pagination. Functions like this
-    // should maintain pagination state, and for each page, for each record in
-    // the page, invoke the `ResourceIteratee`. This will encourage a pattern
-    // where each resource is processed and dropped from memory.
-
-    const users: AcmeUser[] = [
-      {
-        id: 'acme-user-1',
-        name: 'User One',
-      },
-      {
-        id: 'acme-user-2',
-        name: 'User Two',
-      },
-    ];
-
-    for (const user of users) {
-      await iteratee(user);
-    }
-  }
-
-  /**
-   * Iterates each group resource in the provider.
-   *
-   * @param iteratee receives each resource to produce entities/relationships
-   */
-  public async iterateGroups(
-    iteratee: ResourceIteratee<AcmeGroup>,
-  ): Promise<void> {
-    // TODO paginate an endpoint, invoke the iteratee with each record in the
-    // page
-    //
-    // The provider API will hopefully support pagination. Functions like this
-    // should maintain pagination state, and for each page, for each record in
-    // the page, invoke the `ResourceIteratee`. This will encourage a pattern
-    // where each resource is processed and dropped from memory.
-
-    const groups: AcmeGroup[] = [
-      {
-        id: 'acme-group-1',
-        name: 'Group One',
-        users: [
-          {
-            id: 'acme-user-1',
-          },
-        ],
-      },
-    ];
-
-    for (const group of groups) {
-      await iteratee(group);
-    }
   }
 }
 

@@ -6,11 +6,6 @@ function getMalopKey(id: string): string {
   return `malop:${id}`;
 }
 
-// TODO: some improvements:
-// 1) If the value is boolean in string form - e.g. "false" or "true", convert it to boolean
-// 2) Quite a few fields can have values either be an array of single element, or multiple
-//    We'd need to isolate those fields and then for those fields always return them as an array of elements
-
 function toBool(val: any) {
   if (val === 'true') {
     return true;
@@ -47,9 +42,7 @@ export function createMalopEntity(data: Malop) {
         _class: Entities.MALOP._class,
         _type: Entities.MALOP._type,
         _key: getMalopKey(data.guidString),
-        // This is required field and displayName will pick its value by default
         name: data.guidString,
-        // displayName: data.guidString, // Doubtful if this is needed
         id: data.guidString,
         hasRansomwareSuspendedProcesses: mapMalopSimpleFieldValue(
           data.simpleValues.hasRansomwareSuspendedProcesses,
@@ -110,7 +103,6 @@ export function createMalopEntity(data: Malop) {
               10,
             )
           : undefined,
-        // In general, whenever we know some value can be null, we'd want to set it as undefined instead
         closerName:
           mapMalopSimpleFieldValue(data.simpleValues.closerName) || undefined,
         // elementValues seem useful however they're not primitive types and neither arrays of primitive types

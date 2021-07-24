@@ -19,9 +19,10 @@ export async function fetchRemediations({
   // E.g. there are no remediations for such malop
   // Would be great if we can find if there's some link between malop and its remediations
   // For example, if the malop has some field value of X, maybe that means remediation exists for it
-  // TODO: Could you pick few malops that have remediations, pick a few that don't have it and see if you can notice anything?
-  // TODO: Furthermore this endpoint takes a while because we have to ask it for every single malop, is there some more generic endpoint that returns all remediations and
-  // then we can manually connect them with all the malops we've fetched?
+
+  // TODO: Find link between malop and existance of remediation, if any exists
+  // TODO: Furthermore this endpoint takes a while because we have to ask it for every single malop, would be great if there exists a more generic endpoint that returns all remediations and
+  // then we can manually connect them with all the malops we've fetched
 
   // Placeholder for now, so that we don't have to wait a long time
   let count = 0;

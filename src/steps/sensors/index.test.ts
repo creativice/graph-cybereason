@@ -6,7 +6,6 @@ import { fetchSensors } from '.';
 import { integrationConfig } from '../../../test/config';
 import { setupCybereasonRecording } from '../../../test/recording';
 import { IntegrationConfig } from '../../config';
-import { Entities } from '../constants';
 
 describe('#fetchSensors', () => {
   let recording: Recording;
@@ -41,11 +40,11 @@ describe('#fetchSensors', () => {
     }).toMatchSnapshot();
 
     const malops = context.jobState.collectedEntities.filter((e) =>
-      e._class.includes(Entities.SENSOR._class as string),
+      e._class.includes('Sensor'),
     );
     expect(malops.length).toBeGreaterThan(0);
     expect(malops).toMatchGraphObjectSchema({
-      _class: [Entities.SENSOR._class as string],
+      _class: ['Sensor'],
       schema: {
         additionalProperties: false,
         properties: {
@@ -53,7 +52,7 @@ describe('#fetchSensors', () => {
             type: 'array',
             items: { type: 'object' },
           },
-          _type: { const: Entities.SENSOR._type },
+          _type: { const: 'cybereason_sensor' },
           name: { type: 'string' },
           id: { type: 'string' },
           sensorId: {
@@ -79,10 +78,10 @@ describe('#fetchSensors', () => {
           },
           siteName: {
             type: 'string',
-          }, // Unclear
+          },
           siteId: {
             type: 'string',
-          }, // Unclear
+          },
           ransomwareStatus: {
             type: 'string',
           },
@@ -172,10 +171,10 @@ describe('#fetchSensors', () => {
           },
           proxyAddress: {
             type: 'string',
-          }, // Unclear
+          },
           preventionError: {
             type: 'string',
-          }, // Unclear
+          },
           exitReason: {
             type: 'string',
           },
@@ -184,13 +183,13 @@ describe('#fetchSensors', () => {
           },
           pendingActions: {
             type: 'number',
-          }, // Unclear
+          },
           lastUpgradeResult: {
             type: 'string',
-          }, // Unclear
+          },
           lastUpgradeSteps: {
             type: 'string',
-          }, // Unclear
+          },
           disconnected: {
             type: 'boolean',
           },
@@ -209,7 +208,6 @@ describe('#fetchSensors', () => {
           lastQuickScheduleScanSuccessTime: {
             type: 'number',
           },
-          // Required fields for class "Scanner"
           category: { type: 'string' },
         },
       },

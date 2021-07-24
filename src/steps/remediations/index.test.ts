@@ -6,7 +6,6 @@ import { fetchRemediations } from '.';
 import { integrationConfig } from '../../../test/config';
 import { setupCybereasonRecording } from '../../../test/recording';
 import { IntegrationConfig } from '../../config';
-import { Entities } from '../constants';
 
 describe('#fetchRemediations', () => {
   let recording: Recording;
@@ -41,11 +40,11 @@ describe('#fetchRemediations', () => {
     }).toMatchSnapshot();
 
     const malops = context.jobState.collectedEntities.filter((e) =>
-      e._class.includes(Entities.REMEDIATION._class as string),
+      e._class.includes('Control'),
     );
     expect(malops.length).toBeGreaterThan(0);
     expect(malops).toMatchGraphObjectSchema({
-      _class: [Entities.REMEDIATION._class as string],
+      _class: ['Control'],
       schema: {
         additionalProperties: false,
         properties: {
@@ -53,7 +52,7 @@ describe('#fetchRemediations', () => {
             type: 'array',
             items: { type: 'object' },
           },
-          _type: { const: Entities.REMEDIATION._type },
+          _type: { const: 'cybereason_remediation' },
           name: { type: 'string' },
           id: { type: 'string' },
           malopId: { type: 'string' },

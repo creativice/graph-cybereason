@@ -16,8 +16,6 @@ export function createSensorEntity(data: Sensor) {
         _key: getSensorKey(data.guid),
         name: data.guid,
         category: ['sensor'],
-        // TODO: can you map all the fields in here?
-        // Similar to malops/converter.ts (just you don't have use the custom map function)
         sensorId: data.sensorId,
         pylumId: data.pylumId,
         guid: data.guid,
@@ -25,8 +23,8 @@ export function createSensorEntity(data: Sensor) {
         machineName: data.machineName,
         internalIpAddress: data.internalIpAddress,
         externalIpAddress: data.externalIpAddress,
-        siteName: data.siteName, // Unclear
-        siteId: data.siteId, // Unclear
+        siteName: data.siteName,
+        siteId: data.siteId,
         ransomwareStatus: data.ransomwareStatus,
         preventionStatus: data.preventionStatus,
         isolated: data.isolated,
@@ -56,13 +54,13 @@ export function createSensorEntity(data: Sensor) {
         powerShellStatus: data.powerShellStatus,
         antiMalwareStatus: data.antiMalwareStatus,
         organization: data.organization,
-        proxyAddress: data.proxyAddress, // Unclear
-        preventionError: data.preventionError, // Unclear
+        proxyAddress: data.proxyAddress,
+        preventionError: data.preventionError,
         exitReason: data.exitReason,
         actionsInProgess: data.actionsInProgess,
-        pendingActions: data.pendingActions, // Unclear
-        lastUpgradeResult: data.lastUpgradeResult, // Unclear
-        lastUpgradeSteps: data.lastUpgradeSteps, // Unclear
+        pendingActions: data.pendingActions,
+        lastUpgradeResult: data.lastUpgradeResult,
+        lastUpgradeSteps: data.lastUpgradeSteps,
         disconnected: data.disconnected,
         sensorLastUpdate: data.sensorLastUpdate,
         fullScanStatus: data.fullScanStatus,
